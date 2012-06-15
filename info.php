@@ -37,7 +37,7 @@ else {
 $module_directory = 'lib_webthumbnail';
 $module_name = 'libWebThumbnail';
 $module_function = (defined('LEPTON_VERSION')) ? 'library' : 'snippet';
-$module_version = '0.10';
+$module_version = '0.11';
 $module_status = 'BETA';
 $module_platform = '2.8';
 $module_author = 'Ralf Hertsch, Berlin (Germany)';
