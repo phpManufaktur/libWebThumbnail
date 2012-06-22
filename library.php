@@ -102,6 +102,9 @@ class libWebThumbnail {
   protected $url_image_directory;
   protected $path_image_directory;
 
+  protected static $config_file = 'config.json';
+  protected static $table_prefix = TABLE_PREFIX;
+
   /**
    * Constructor for libWebThumbnail
    * Set $error on problems while initializing the library
@@ -118,6 +121,11 @@ class libWebThumbnail {
             $this->lang->translate('Error: Can\'t create the directory {{ directory }}.',
                 array('directory' => MEDIA_DIRECTORY.self::IMAGE_DIRECTORY))));
       }
+    }
+    if (file_exists(LEPTON_PATH.'/modules/lib_webthumbnail/config.json')) {
+      $config = json_decode(file_get_contents(LEPTON_PATH.'/modules/lib_webthumbnail/config.json', true));
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
     }
   } // __construct()
 
@@ -195,7 +203,7 @@ class libWebThumbnail {
     global $database;
     $SQL = sprintf("SELECT * FROM `%smod_webthumbnail` WHERE `url`='%s' AND ".
         "`browser`='%s' AND `img_format`='%s' AND `width`='%d' AND `height`='%d'",
-        TABLE_PREFIX, $params[self::PARAM_URL], $params[self::PARAM_BROWSER],
+        self::$table_prefix, $params[self::PARAM_URL], $params[self::PARAM_BROWSER],
         $params[self::PARAM_FORMAT], $params[self::PARAM_WIDTH],
         $params[self::PARAM_HEIGHT]);
     if (false === ($query = $database->query($SQL))) {
@@ -281,7 +289,7 @@ class libWebThumbnail {
         "`img_format`,`width`,`height`,`page_id`) VALUES ('%s','%s','%s','%s','%d',".
         "'%d','%d') ON DUPLICATE KEY UPDATE `url`='%s',`browser`='%s',`img_format`='%s',".
         "`width`='%d',`height`='%d',`page_id`='%d',`timestamp`='%s'",
-        TABLE_PREFIX,
+        self::$table_prefix,
         $params[self::PARAM_URL],
         $params[self::PARAM_BROWSER],
         $image_name,
@@ -336,7 +344,7 @@ class libWebThumbnail {
     // get the date in the past
     $past_date = date('Y-m-d H:i:s', mktime(date('H')-self::UPDATE_CYCLE,date('i'),date('s'),date('m'),date('d'),date('Y')));
     $SQL = sprintf("SELECT * FROM `%smod_webthumbnail` WHERE `timestamp`<'%s' ORDER BY `timestamp` ASC LIMIT 1",
-        TABLE_PREFIX, $past_date);
+        self::$table_prefix, $past_date);
     if (false === ($query = $database->query($SQL))) {
       $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
       return false;

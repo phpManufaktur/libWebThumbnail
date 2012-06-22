@@ -34,7 +34,8 @@ else {
 // end include class.secure.php
 
 // wb2lepton compatibility
-if (!defined('LEPTON_PATH')) require_once WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/wb2lepton.php';
+if (!defined('LEPTON_PATH'))
+  require_once WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/wb2lepton.php';
 
 if (file_exists(LEPTON_PATH . '/modules/droplets/functions.inc.php'))
   require_once LEPTON_PATH . '/modules/droplets/functions.inc.php';
@@ -103,7 +104,14 @@ if (!function_exists('wb_unpack_and_import')) {
 global $database;
 global $admin;
 
-$SQL = "CREATE TABLE IF NOT EXISTS `" . TABLE_PREFIX . "mod_webthumbnail` ( " .
+$table_prefix = TABLE_PREFIX;
+if (file_exists(LEPTON_PATH.'/modules/lib_webthumbnail/config.json')) {
+  $config = json_decode(file_get_contents(LEPTON_PATH.'/modules/lib_webthumbnail/config.json', true));
+  if (isset($config['table_prefix']))
+    $table_prefix = $config['table_prefix'];
+}
+
+$SQL = "CREATE TABLE IF NOT EXISTS `" . $table_prefix . "mod_webthumbnail` ( " .
   "`id` INT(11) NOT NULL AUTO_INCREMENT, " .
   "`url` TEXT, " .
   "`browser` ENUM('chrome','firefox','opera') NOT NULL DEFAULT 'firefox', " .

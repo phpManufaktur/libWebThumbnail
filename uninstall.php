@@ -34,10 +34,21 @@ else {
 }
 // end include class.secure.php
 
+// wb2lepton compatibility
+if (!defined('LEPTON_PATH'))
+  require_once WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/wb2lepton.php';
+
 global $database;
 global $admin;
 
-$database->query('DROP TABLE IF EXISTS `'.TABLE_PREFIX.'mod_webthumbnail`');
+$table_prefix = TABLE_PREFIX;
+if (file_exists(LEPTON_PATH.'/modules/lib_webthumbnail/config.json')) {
+  $config = json_decode(file_get_contents(LEPTON_PATH.'/modules/lib_webthumbnail/config.json', true));
+  if (isset($config['table_prefix']))
+    $table_prefix = $config['table_prefix'];
+}
+
+$database->query('DROP TABLE IF EXISTS `'.$table_prefix.'mod_webthumbnail`');
 if ($database->is_error()) {
   $admin->print_error($database->get_error());
 }
