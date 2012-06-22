@@ -123,7 +123,7 @@ class libWebThumbnail {
       }
     }
     if (file_exists(LEPTON_PATH.'/modules/lib_webthumbnail/config.json')) {
-      $config = json_decode(file_get_contents(LEPTON_PATH.'/modules/lib_webthumbnail/config.json', true));
+      $config = json_decode(file_get_contents(LEPTON_PATH.'/modules/lib_webthumbnail/config.json'), true);
       if (isset($config['table_prefix']))
         self::$table_prefix = $config['table_prefix'];
     }
